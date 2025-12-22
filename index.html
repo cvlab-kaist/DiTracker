@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DiTracker: Repurposing Video Diffusion Transformers for Robust Point Tracking</title>
+<meta name="description"
+content="Project page for DiTracker: Repurposing Video Diffusion Transformers for Robust Point Tracking" />
+
+<!-- Fonts and Icons -->
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="style.css" />
+
+<!-- MathJax -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar" aria-label="Section navigation">
+<a href="#overview" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">Overview</span>
+</a>
+<a href="#analysis" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">Analysis</span>
+</a>
+<a href="#ditracker" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">DiTracker</span>
+</a>
+<a href="#results" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">Results</span>
+</a>
+<a href="#citation" class="sidebar-item">
+    <div class="sidebar-dot"></div>
+    <span class="sidebar-label">Citation</span>
+</a>
+</nav>
+
+<!-- Hero Section -->
+<section id="overview" class="hero-section">
+<div class="hero-container">
+    <h1 class="hero-title">
+    <span class="gradient-text">DiTracker</span>
+    : Repurposing Video Diffusion Transformers for Robust Point Tracking
+    </h1>
+    <p class="hero-status">arXiv 2025</p>
+
+    <!-- Authors -->
+    <div class="hero-authors">
+    <span><a href="https://scholar.google.com/citations?hl=&user=Eo87mRsAAAAJ">Soowon Son<sup>1</sup></a></span>
+    <span><a href="https://hg010303.github.io/">Honggyu An<sup>1</sup></a></span>
+    <span><a href="https://kchyun.github.io/">Chaehyun Kim<sup>1</sup></a></span>
+    <span><a href="https://scholar.google.com/citations?user=oh5Od2wAAAAJ">Hyunah Ko<sup>1</sup></a></span>
+    <span><a href="https://nam-jisu.github.io/">Jisu Nam<sup>1</sup></a></span>
+    <span><a href="https://scholar.google.com/citations?hl=&user=EU52riMAAAAJ">Dahyun Chung<sup>1</sup></a></span>
+    <span><a href="https://scholar.google.com/citations?hl=&user=rXRHxkwAAAAJ">Siyoon Jin<sup>1</sup></a></span>
+    <span><a href="https://yj-142150.github.io/jungyi/">Jung Yi<sup>1</sup></a></span>
+    <span><a href="https://scholar.google.com/citations?user=WIiNrmoAAAAJ">Jaewon Min<sup>1</sup></a></span>
+    <span><a href="https://hurjunhwa.github.io/">Junhwa Hur<sup>2&dagger;</sup></a></span>
+    <span><a href="https://cvlab.kaist.ac.kr">Seungryong Kim<sup>1&dagger;</sup></a></span>
+    </div>
+
+    <div class="hero-affiliations">
+    <span><sup>1</sup>KAIST AI</span>
+    <span><sup>2</sup>Google DeepMind</span>
+    </div>
+
+    <div class="hero-notes">
+    <span>&dagger;: Co-corresponding author</span>
+    </div>
+
+    <!-- Link Buttons -->
+    <div class="hero-buttons">
+    <a href="#" class="btn">
+        <i class="fa-solid fa-file-pdf"></i> Paper
+    </a>
+    <a href="#" class="btn btn-outline">
+        <i class="fa-brands fa-github"></i> Code (TBD)
+    </a>
+    <a href="#citation" class="btn btn-outline">
+        <i class="fa-solid fa-quote-right"></i> BibTeX
+    </a>
+    </div>
+</div>
+
+<!-- Teaser -->
+<div class="teaser-container">
+    <!-- TL;DR Box -->
+    <div class="tldr-box">
+    <div class="tldr-content">
+        <span class="tldr-label">TL;DR</span>
+        <p class="tldr-text">
+        <span class="tldr-highlight">DiTracker</span> repurposes video DiTs for point tracking with
+        softmax-based matching, LoRA adaptation, and cost fusion, achieving <strong>stronger robustness and faster convergence</strong>.
+        </p>
+    </div>
+    </div>
+
+    <br />
+
+    <!-- Optional: teaser carousel (enabled + container exists) -->
+    <div id="carousel-teaser" class="carousel-container"></div>
+
+    <div class="teaser-caption">
+        <p>
+            <span class="tldr-highlight">DiTracker</span> leverages pre-trained video Diffusion Transformer (DiT) features to outperform state-of-the-art methods such as CoTracker3 
+            in challenging real-world scenarios involving complex motion and frequent occlusions, while achieving comparable final performance with 10x faster convergence, substantially reducing training cost.
+            These results demonstrate that pre-trained video DiT features constitute an effective and efficient foundation for robust point tracking
+        </p>
+    </div>
+</div>
+</section>
+
+<!-- Abstract -->
+<section class="section alt-bg">
+<div class="container">
+    <div class="analysis-image-container">
+        <img src="assets/teaser_graph.png" alt="DiTracker teaser graph" class="analysis-image" />
+    </div>
+
+    <h2 class="section-title">Abstract</h2>
+    <div class="abstract-text">
+    <p>
+      Point tracking aims to localize corresponding points across video frames, serving as a fundamental task for 4D reconstruction, robotics, and video editing. 
+      Existing methods commonly rely on shallow convolutional backbones such as ResNet that process frames independently, lacking temporal coherence and producing 
+      unreliable matching costs under challenging conditions. Through systematic analysis, we find that video Diffusion Transformers (DiTs), pre-trained on large-scale 
+      real-world videos with spatio-temporal attention, inherently exhibit strong point tracking capability and robustly handle dynamic motions and frequent occlusions. 
+      We propose <strong>DiTracker</strong>, which adapts video DiTs through: (1) query-key attention matching, (2) lightweight LoRA tuning, and 
+      (3) cost fusion with a ResNet backbone. Despite training with 8x smaller batch size, DiTracker achieves state-of-the-art performance on challenging 
+      ITTO benchmark and matches or outperforms state-of-the-art models on TAP-Vid benchmarks. Our work validates video DiT features as an effective and efficient foundation for point tracking.
+    </p>
+    </div>
+</div>
+</section>
+
+<!-- Analysis Section -->
+<section id="analysis" class="section">
+<div class="container">
+    <h2 class="section-title">Analysis</h2>
+
+    <p>
+    To investigate whether pre-trained video DiT features can address key limitations in point tracking,
+    our analysis compares multiple pre-trained video DiT models (HunyuanVideo, CogVideoX-2B, CogVideoX-5B, Wan-14B)
+    with the supervised ResNet backbone from CoTracker3 and other vision foundation models (DINOv2, DINOv3, V-JEPA2).
+    </p>
+
+    <div>
+    <figure class="table-figure">
+        <figcaption>
+        <span class="legend">
+            <span><span class="swatch best"></span>Best</span>
+            <span><span class="swatch best2"></span>2nd</span>
+            <span><span class="swatch best3"></span>3rd</span>
+        </span>
+        </figcaption>
+
+        <table class="results-table">
+        <thead>
+            <tr>
+            <th rowspan="2">Method</th>
+            <th>&lt; δ<sup>0</sup></th>
+            <th>&lt; δ<sup>1</sup></th>
+            <th>&lt; δ<sup>2</sup></th>
+            <th>&lt; δ<sup>3</sup></th>
+            <th>&lt; δ<sup>4</sup></th>
+            <th>δ<sup>x</sup><sub>avg</sub></th>
+            </tr>
+            <tr>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+            <td>ResNet (CoTracker3)</td>
+            <td class="best2">10.5</td>
+            <td class="best">34.0</td>
+            <td>49.7</td>
+            <td>57.7</td>
+            <td>66.6</td>
+            <td>43.7</td>
+            </tr>
+
+            <tr class="group-divider"><td colspan="7"></td></tr>
+
+            <tr>
+            <td>V-JEPA2</td>
+            <td>2.8</td><td>10.5</td><td>30.5</td><td>55.4</td><td>69.9</td><td>33.8</td>
+            </tr>
+            <tr>
+            <td>DINOv2-B/14</td>
+            <td>2.8</td><td>10.9</td><td>35.6</td><td>67.2</td><td>83.5</td><td>40.0</td>
+            </tr>
+            <tr>
+            <td>DINOv3-B/16</td>
+            <td>3.0</td><td>11.8</td><td>37.7</td><td>68.2</td><td class="best2">84.7</td><td>41.1</td>
+            </tr>
+
+            <tr class="group-divider"><td colspan="7"></td></tr>
+
+            <tr>
+            <td>HunyuanVideo</td>
+            <td>4.4</td><td>18.2</td><td>44.8</td><td>70.1</td><td>82.8</td><td>44.1</td>
+            </tr>
+            <tr>
+            <td>CogVideoX-2B</td>
+            <td>4.8</td><td>19.4</td><td class="best3">49.2</td><td class="best2">73.6</td><td class="best">86.3</td><td class="best3">46.3</td>
+            </tr>
+            <tr>
+            <td>CogVideoX-5B</td>
+            <td class="best3">5.2</td><td class="best3">20.5</td><td class="best2">50.7</td><td class="best">73.9</td><td class="best3">84.3</td><td class="best2">46.9</td>
+            </tr>
+            <tr>
+            <td>WAN-14B</td>
+            <td class="best">12.4</td><td class="best2">31.9</td><td class="best">56.7</td><td class="best3">72.1</td><td>82.7</td><td class="best">51.2</td>
+            </tr>
+        </tbody>
+        </table>
+    </figure>
+
+    <p>
+        <strong>Zero-shot point tracking performance comparison on TAP-Vid-DAVIS benchmark.</strong> Video DiTs consistently provide superior initial matching despite having no tracking-specific training.
+    </p>
+    </div>
+
+    <div>
+    <!-- <h3 class="analysis-subtitle">Robustness in Real-World Scenarios</h3> -->
+
+    <div class="table-figure">
+      <figcaption>
+        <span class="legend">
+          <span><span class="swatch best"></span>Best</span>
+          <span><span class="swatch best2"></span>2nd</span>
+          <span><span class="swatch best3"></span>3rd</span>
+        </span>
+      </figcaption>
+    
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th rowspan="2">Method</th>
+            <th colspan="5">Motion Blur</th>
+            <th colspan="3">Track Motion</th>
+            <th colspan="3">Reappearance Frequency</th>
+          </tr>
+          <tr>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>[0%, 0.5%)</th><th>[0.5%, 1.5%)</th><th>[1.5%, 5%)</th>
+            <th>[0, 1)</th><th>[1, 3)</th><th>[3, 100)</th>
+          </tr>
+        </thead>
+    
+        <tbody>
+          <tr>
+            <td>ResNet (CoTracker3)</td>
+            <td>42.4</td><td>40.0</td><td>36.2</td><td>31.0</td><td>27.9</td>
+            <td>24.7</td><td>16.7</td><td>9.7</td>
+            <td>22.7</td><td>17.1</td><td>10.6</td>
+          </tr>
+    
+          <tr>
+            <td>V-JEPA2</td>
+            <td>29.0</td><td>27.3</td><td>24.3</td><td>20.3</td><td>19.0</td>
+            <td>21.8</td><td>23.2</td><td>17.4</td>
+            <td>24.4</td><td>20.9</td><td>17.0</td>
+          </tr>
+    
+          <tr>
+            <td>DINOv2</td>
+            <td>39.0</td><td>37.6</td><td>34.7</td><td>32.4</td><td>29.9</td>
+            <td>24.3</td><td>23.5</td><td>19.3</td>
+            <td>23.9</td><td>23.6</td><td>19.9</td>
+          </tr>
+          <tr>
+            <td>DINOv3</td>
+            <td>40.0</td><td>38.5</td><td>36.5</td><td>34.0</td><td>31.8</td>
+            <td>30.1</td><td>24.4</td><td class="best3">20.8</td>
+            <td>29.1</td><td>25.8</td><td>20.1</td>
+          </tr>
+    
+          <tr class="group-divider"><td colspan="12"></td></tr>
+    
+          <tr>
+            <td>HunyuanVideo</td>
+            <td>41.7</td><td>40.6</td><td>38.9</td><td>36.4</td><td>34.5</td>
+            <td>42.7</td><td>30.7</td><td>16.9</td>
+            <td>40.6</td><td>28.7</td><td>19.4</td>
+          </tr>
+    
+          <tr>
+            <td>CogVideoX-2B</td>
+            <td class="best3">45.0</td><td class="best3">43.6</td><td class="best3">41.6</td><td class="best3">39.0</td><td class="best3">36.7</td>
+            <td class="best2">45.4</td><td class="best3">33.7</td><td>19.2</td>
+            <td class="best3">43.1</td><td class="best3">31.7</td><td class="best3">21.5</td>
+          </tr>
+    
+          <tr>
+            <td>CogVideoX-5B</td>
+            <td class="best2">45.5</td><td class="best2">44.2</td><td class="best2">42.2</td><td class="best2">39.5</td><td class="best2">37.7</td>
+            <td class="best3">44.9</td><td class="best">37.4</td><td class="best">22.2</td>
+            <td class="best">44.5</td><td class="best2">34.1</td><td class="best">23.9</td>
+          </tr>
+    
+          <tr>
+            <td>WAN-14B</td>
+            <td class="best">50.7</td><td class="best">49.6</td><td class="best">47.6</td><td class="best">44.6</td><td class="best">42.5</td>
+            <td class="best">46.3</td><td class="best2">35.3</td><td class="best2">21.2</td>
+            <td class="best2">43.4</td><td class="best">34.3</td><td class="best2">22.9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+        <strong>Analysis on challenging real-world scenarios from ITTO-MOSE benchmark: (1) motion blur, (2) dynamic motion and (3) frequent occlusions.</strong>
+        The consistent superiority of all video DiTs validates that large-scale pretraining with full 3D attention provides fundamentally stronger motion priors for challenging correspondence tasks.
+    </p>
+    </div>
+</div>
+</section>
+
+<!-- DiTracker Section -->
+<section id="ditracker" class="section alt-bg">
+<div class="container">
+    <h2 class="section-title">DiTracker</h2>
+
+    <div class="analysis-image-container">
+    <img src="assets/main_architecture.png" alt="DiTracker method overview" class="analysis-image" />
+    </div>
+
+    <!-- <div class="results-caption"> -->
+    <p>
+      <strong>Overall Architecture of DiTracker.</strong>
+      For long video sequences, input frames are divided into
+      \( N \) temporal chunks with the global first frame prepended.
+      Individual video frames are encoded via a VAE and processed by a
+      video DiT to extract query features \( q_i \) and key features \( k_j \).
+    </p>
+    \[
+    \mathcal{C}^{\mathrm{DiT}}_{i,j}
+    =
+    \mathrm{Softmax}\!\left(
+      \frac{q_i k_j^\top}{\sqrt{d}}
+    \right)
+    \]
+  
+    <p>
+      The DiT local cost is fused with the ResNet local cost
+      \( \mathcal{C}^{\mathrm{ResNet}}_{i,j} \).
+      Finally, a tracking head refines trajectories over
+      \( T \) iterations, updating displacement
+      \( \Delta P \), visibility \( \Delta V \), and confidence \( \Delta C \).
+    </p>
+    <!-- </div> -->
+</div>
+</section>
+
+<!-- Results Section -->
+<section id="results" class="section">
+<div class="container">
+
+    <!-- 1. Quantitative Results -->
+    <div class="results-block">
+    <h2 class="section-title">Quantitative Results</h2>
+    <div id="carousel-quan" class="carousel-container"></div>
+    </div>
+
+    <!-- 2. Qualitative Results -->
+    <div class="results-block">
+    <h2 class="section-title">Qualitative Results</h2>
+
+    <div class="qual-benchmark-block">
+        <h3 class="analysis-subtitle">ITTO-MOSE</h3>
+        <div id="carousel-qual-itto" class="carousel-container"></div>
+    </div>
+
+    <div class="qual-benchmark-block" style="margin-top: 2rem;">
+        <h3 class="analysis-subtitle">TAP-Vid-DAVIS</h3>
+        <div id="carousel-qual-davis" class="carousel-container"></div>
+    </div>
+
+    <div class="qual-benchmark-block" style="margin-top: 2rem;">
+      <h3 class="analysis-subtitle">TAP-Vid-DAVIS with Corruptions</h3>
+      <div id="carousel-qual-corruption" class="carousel-container"></div>
+    </div>
+    </div>
+    
+  </div>
+</div>
+</section>
+
+<!-- Citation Section -->
+<section id="citation" class="citation-section">
+<div class="container">
+    <h2 class="section-title" style="font-size: 1.5rem; border: none; margin-bottom: 1rem;">Citation</h2>
+    <div class="citation-block">
+    <button onclick="copyBibtex()" class="citation-copy-btn">
+        <i class="fa-regular fa-copy"></i> Copy
+    </button>
+    <pre class="citation-code"><code id="bibtex-text"></code></pre>
+    </div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+<div class="container">
+    <p>DiTracker: Repurposing Video Diffusion Transformers for Robust Point Tracking.</p>
+</div>
+</footer>
+
+<script>
+// Generic Carousel Class
+class Carousel {
+    constructor(containerId, data, renderItem) {
+    this.container = document.getElementById(containerId);
+    if (!this.container) return; // safety guard
+    this.data = data;
+    this.renderItem = renderItem;
+    this.currentIndex = 0;
+    this.totalSlides = data.length;
+
+    this.init();
+    window.addEventListener('resize', () => this.updateHeight());
+    this.container.addEventListener('load', () => this.updateHeight(), true);
+    }
+
+    init() {
+    this.container.innerHTML = `
+        <div class="carousel-viewport">
+        <div class="carousel-track">
+            ${this.data.map(item => `
+            <div class="carousel-slide">
+                ${this.renderItem(item)}
+            </div>
+            `).join('')}
+        </div>
+        </div>
+
+        <button class="carousel-nav-btn prev" aria-label="Previous slide">
+        <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="carousel-nav-btn next" aria-label="Next slide">
+        <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <div class="carousel-dots">
+        ${this.data.map((_, i) => `
+            <button class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="Go to slide ${i+1}"></button>
+        `).join('')}
+        </div>
+    `;
+
+    this.track = this.container.querySelector('.carousel-track');
+    this.dots = this.container.querySelectorAll('.carousel-dots button');
+
+    const prevBtn = this.container.querySelector('.carousel-nav-btn.prev');
+    const nextBtn = this.container.querySelector('.carousel-nav-btn.next');
+
+    if (prevBtn) prevBtn.onclick = () => this.move(-1);
+    if (nextBtn) nextBtn.onclick = () => this.move(1);
+    this.dots.forEach((dot, i) => dot.onclick = () => this.goTo(i));
+    }
+
+    move(direction) {
+    this.currentIndex = (this.currentIndex + direction + this.totalSlides) % this.totalSlides;
+    this.update();
+    }
+
+    goTo(index) {
+    this.currentIndex = index;
+    this.update();
+    }
+
+    update() {
+    if (!this.track) return;
+    this.track.style.transform = `translateX(-${this.currentIndex * 100}%)`;
+    this.dots.forEach((dot, i) => {
+        dot.className = `carousel-dot ${i === this.currentIndex ? 'active' : ''}`;
+    });
+    this.updateHeight();
+    }
+
+    updateHeight() {
+    const viewport = this.container.querySelector('.carousel-viewport');
+    const slides = this.container.querySelectorAll('.carousel-slide');
+    if (!viewport || !slides[this.currentIndex]) return;
+    const height = slides[this.currentIndex].offsetHeight;
+    viewport.style.height = `${height}px`;
+    }
+}
+
+// Helpers
+function chunkArray(arr, size) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+    return out;
+}
+
+// ----- Teaser carousel -----
+const teaserItems = [
+    {
+        left: "assets/videos/teaser/monkey/cotracker3.mp4",
+        right: "assets/videos/teaser/monkey/ours.mp4",
+        leftLabel: "CoTracker3",
+        rightLabel: "DiTracker",
+    },
+    {
+      left: "assets/videos/teaser/horse/cotracker3.mp4",
+        right: "assets/videos/teaser/horse/ours.mp4",
+        leftLabel: "CoTracker3",
+        rightLabel: "DiTracker",
+    },
+    {
+      left: "assets/videos/teaser/goat/cotracker3.mp4",
+        right: "assets/videos/teaser/goat/ours.mp4",
+        leftLabel: "CoTracker3",
+        rightLabel: "DiTracker",
+    }
+];
+
+function renderTeaserSlide(item) {
+    return `
+    <div class="results-slide-content">
+        <div class="qual-grid">
+        <div class="qual-col">
+            <div class="qual-header">${item.leftLabel ?? ""}</div>
+            <video src="${item.left}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+        </div>
+        <div class="qual-col">
+            <div class="qual-header"><span class="tldr-highlight">${item.rightLabel ?? ""}</span></div>
+            <video src="${item.right}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+        </div>
+        </div>
+    </div>
+    `;
+}
+
+// ----- Qualitative data -----
+const qualitativeDAVISItems = [
+    {
+    offline: "assets/videos/DAVIS/bboy/cotracker3.mp4",
+    gt: "assets/videos/DAVIS/bboy/gt.mp4",
+    ditracker: "assets/videos/DAVIS/bboy/ours.mp4",
+    },
+    {
+    offline: "assets/videos/DAVIS/paqurr/cotracker3.mp4",
+    gt: "assets/videos/DAVIS/paqurr/gt.mp4",
+    ditracker: "assets/videos/DAVIS/paqurr/ours.mp4",
+    },
+];
+
+const qualitativeITTOItems = [
+    {
+    offline: "assets/videos/ITTO/e7e2a0b9/cotracker3.mp4",
+    gt: "assets/videos/ITTO/e7e2a0b9/gt.mp4",
+    ditracker: "assets/videos/ITTO/e7e2a0b9/ours.mp4",
+    },
+    {
+    offline: "assets/videos/ITTO/b0f7e75c/cotracker3.mp4",
+    gt: "assets/videos/ITTO/b0f7e75c/gt.mp4",
+    ditracker: "assets/videos/ITTO/b0f7e75c/ours.mp4",
+    },
+    {
+    offline: "assets/videos/ITTO/b4f876fb/cotracker3.mp4",
+    gt: "assets/videos/ITTO/b4f876fb/gt.mp4",
+    ditracker: "assets/videos/ITTO/b4f876fb/ours.mp4",
+    },
+    {
+      offline: "assets/videos/ITTO/b0ffaf3b/cotracker3.mp4",
+      gt: "assets/videos/ITTO/b0ffaf3b/gt.mp4",
+      ditracker: "assets/videos/ITTO/b0ffaf3b/ours.mp4",
+      },
+];
+
+const qualitativeCorruptionItems = [
+    {
+    offline: "assets/videos/Corruption/gaussian_noise/cotracker3.mp4",
+    gt: "assets/videos/Corruption/gaussian_noise/gt.mp4",
+    ditracker: "assets/videos/Corruption/gaussian_noise/ours.mp4",
+    },
+    {
+      offline: "assets/videos/Corruption/motion_blur/cotracker3.mp4",
+      gt: "assets/videos/Corruption/motion_blur/gt.mp4",
+      ditracker: "assets/videos/Corruption/motion_blur/ours.mp4",
+      },
+];
+
+
+const QUAL_PER_SLIDE = 1;
+const qualitativeDAVISSlides = chunkArray(qualitativeDAVISItems, QUAL_PER_SLIDE).map(items => ({
+    title: "",
+    desc: "",
+    items,
+}));
+const qualitativeITTOSlides = chunkArray(qualitativeITTOItems, QUAL_PER_SLIDE).map(items => ({
+    title: "",
+    desc: "",
+    items,
+}));
+
+const qualitativeCorruptionSlides = chunkArray(qualitativeCorruptionItems, QUAL_PER_SLIDE).map(items => ({
+  title: "",
+  desc: "",
+  items,
+}));
+
+function renderQualitativeCard(item) {
+    return `
+    <div class="qual-grid2">
+        <div class="qual-col">
+        <div class="qual-header">GT</div>
+        <video src="${item.gt}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+        </div>
+        <div class="qual-col">
+        <div class="qual-header">CoTracker3</div>
+        <video src="${item.offline}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+        </div>
+        <div class="qual-col">
+        <div class="qual-header"><span class="tldr-highlight">DiTracker</span></div>
+        <video src="${item.ditracker}" class="qual-vid" autoplay muted loop playsinline preload="metadata"></video>
+        </div>
+    </div>
+    `;
+}
+
+function renderQualitativeSlide(slide) {
+    return `
+    <div class="results-slide-content">
+        <div class="qual-gallery">
+        ${slide.items.map(item => `
+            <div class="qual-gallery-item">
+            ${renderQualitativeCard(item)}
+            </div>
+        `).join('')}
+        </div>
+
+        ${slide.desc ? `
+        <div class="results-caption"><p>${slide.desc}</p></div>
+        ` : ''}
+    </div>
+    `;
+}
+
+// ----- Quantitative table slides -----
+const tableData = [
+    {
+    title: 'All Benchmarks',
+    desc: '',
+    tables: `
+        <div class="results-table-wrapper" style="max-width: 100%; overflow-x: auto;">
+        <div class="table-caption">
+            <span class="legend">
+            <span><span class="swatch best"></span>Best</span>
+            <span><span class="swatch best2"></span>2nd</span>
+            <span><span class="swatch best3"></span>3rd</span>
+            </span>
+        </div>
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th rowspan="2">Method</th>
+                <th rowspan="2">Training<br>Dataset</th>
+                <th rowspan="2">Steps</th>
+                <th rowspan="2">Sequence<br>Length</th>
+                <th rowspan="2">Batch Size</th>
+                <th colspan="3">ITTO-MOSE</th>
+                <th colspan="3">TAP-Vid-DAVIS</th>
+                <th colspan="3">TAP-Vid-Kinetics</th>
+            </tr>
+            <tr>
+                <th>AJ&uarr;</th><th>&lt;δ<sup>x</sup><sub>avg</sub>&uarr;</th><th>OA&uarr;</th>
+                <th>AJ&uarr;</th><th>&lt;δ<sup>x</sup><sub>avg</sub>&uarr;</th><th>OA&uarr;</th>
+                <th>AJ&uarr;</th><th>&lt;δ<sup>x</sup><sub>avg</sub>&uarr;</th><th>OA&uarr;</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>TAPIR</td><td>Kub.</td><td>50k</td><td>24</td><td>4</td>
+                <td>33.1</td><td>46.1</td><td>75.9</td>
+                <td>56.2</td><td>70.0</td><td>86.5</td>
+                <td>49.6</td><td>64.2</td><td>85.0</td>
+            </tr>
+
+            <tr>
+                <td>TAPTRv2</td><td>Kub.</td><td>36k</td><td>-</td><td>32</td>
+                <td>36.3</td><td>47.8</td><td class="best3">76.9</td>
+                <td class="best2">63.0</td><td>76.1</td><td class="best2">91.1</td>
+                <td>49.0</td><td>64.4</td><td class="best3">85.2</td>
+            </tr>
+
+            <tr>
+                <td>BootsTAPIR</td><td>Kub. + 15M</td><td>200k</td><td>-</td><td>1,536</td>
+                <td>36.9</td><td>51.1</td><td>76.4</td>
+                <td>61.4</td><td>73.6</td><td class="best3">88.7</td>
+                <td class="best2">54.6</td><td class="best">68.4</td><td class="best2">86.5</td>
+            </tr>
+
+            <tr>
+                <td>LocoTrack</td><td>Kub.</td><td>400k</td><td>24-48</td><td>8</td>
+                <td class="best3">39.2</td><td class="best2">52.3</td><td class="best2">78.2</td>
+                <td class="best">64.8</td><td class="best2">77.4</td><td>86.2</td>
+                <td>52.3</td><td>66.4</td><td>82.1</td>
+            </tr>
+
+            <tr>
+                <td>CoTracker3</td><td>Kub.</td><td>50k</td><td>60</td><td>32</td>
+                <td>31.4</td><td>43.9</td><td>70.5</td>
+                <td>57.8</td><td>74.9</td><td>80.4</td>
+                <td>49.3</td><td>62.7</td><td>78.7</td>
+            </tr>
+
+            <tr>
+                <td>CoTracker3&dagger;</td><td>Kub. + 15k</td><td>65k</td><td>60-80</td><td>32</td>
+                <td class="best2">40.3</td><td class="best3">51.6</td><td class="best">79.4</td>
+                <td class="best">64.8</td><td class="best3">76.8</td><td class="best">91.7</td>
+                <td class="best">54.7</td><td class="best2">67.8</td><td class="best">87.5</td>
+            </tr>
+
+            <tr>
+                <td><span class="tldr-highlight">DiTracker</span></td><td>Kub.</td><td>36k</td><td>46</td><td>4</td>
+                <td class="best">41.1</td><td class="best">54.1</td><td class="best">79.4</td>
+                <td class="best3">62.7</td><td class="best">77.5</td><td>85.2</td>
+                <td class="best3">54.3</td><td class="best3">67.4</td><td>84.5</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+        <p>
+        <strong>Quantitative results comparison on ITTO-MOSE, TAP-Vid-DAVIS and TAP-Vid-Kinetics.</strong>
+        Our method trained solely on Kubric with 36K steps significantly outperforms other baselines, despite their substantial advantages in dataset size, training steps, and batch size.        </p>
+    `,
+    qualItems: null
+    },
+    // (Slide 2) ✅ ITTO-MOSE table (from your LaTeX)
+  {
+    title: 'Challenging Scenarios',
+    desc: '',
+    tables: `
+      <!-- Quantitative Results (Slide 2): ITTO-MOSE difficulty breakdown -->
+      <div class="results-table-wrapper" style="max-width: 100%; overflow-x: auto;">
+        <div class="table-caption">
+          <span class="legend">
+            <span><span class="swatch best"></span>Best</span>
+            <span><span class="swatch best2"></span>2nd</span>
+            <span><span class="swatch best3"></span>3rd</span>
+          </span>
+        </div>
+
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th rowspan="3">Method</th>
+              <th colspan="9">Motion Dynamics</th>
+              <th colspan="9">Reappearance Frequency</th>
+            </tr>
+            <tr>
+              <th colspan="3">[0%, 0.5%)</th>
+              <th colspan="3">[0.5%, 1.5%)</th>
+              <th colspan="3">[1.5%, 5%)</th>
+
+              <th colspan="3">[0, 1)</th>
+              <th colspan="3">[1, 3)</th>
+              <th colspan="3">[3, 1000)</th>
+            </tr>
+            <tr>
+              <th>AJ↑</th><th>&lt;δ<sup>x</sup><sub>avg</sub>↑</th><th>OA↑</th>
+              <th>AJ↑</th><th>&lt;δ<sup>x</sup><sub>avg</sub>↑</th><th>OA↑</th>
+              <th>AJ↑</th><th>&lt;δ<sup>x</sup><sub>avg</sub>↑</th><th>OA↑</th>
+
+              <th>AJ↑</th><th>&lt;δ<sup>x</sup><sub>avg</sub>↑</th><th>OA↑</th>
+              <th>AJ↑</th><th>&lt;δ<sup>x</sup><sub>avg</sub>↑</th><th>OA↑</th>
+              <th>AJ↑</th><th>&lt;δ<sup>x</sup><sub>avg</sub>↑</th><th>OA↑</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>TAPIR</td>
+              <td>48.2</td><td>60.9</td><td>82.9</td>
+              <td>36.2</td><td>51.9</td><td>75.9</td>
+              <td>17.6</td><td>28.9</td><td>68.9</td>
+              <td>49.3</td><td>63.1</td><td>88.0</td>
+              <td>33.2</td><td>46.9</td><td>74.8</td>
+              <td>17.4</td><td>28.9</td><td>65.2</td>
+            </tr>
+
+            <tr>
+              <td>TAPTRv2</td>
+              <td>51.6</td><td>64.6</td><td>81.9</td>
+              <td>41.0</td><td>54.0</td><td>78.3</td>
+              <td class="best3">20.0</td><td>29.3</td><td>70.9</td>
+              <td class="best3">58.1</td><td class="best2">69.1</td><td>90.1</td>
+              <td>33.7</td><td>46.9</td><td class="best3">76.4</td>
+              <td>17.8</td><td>27.8</td><td>64.5</td>
+            </tr>
+
+            <tr>
+              <td>BootsTAPIR</td>
+              <td>52.8</td><td>65.1</td><td>84.5</td>
+              <td>42.0</td><td class="best3">57.0</td><td>77.4</td>
+              <td>19.0</td><td class="best3">35.1</td><td>67.3</td>
+              <td>56.8</td><td>68.3</td><td class="best3">90.2</td>
+              <td>36.6</td><td>52.0</td><td>75.3</td>
+              <td>17.7</td><td class="best3">33.5</td><td>64.2</td>
+            </tr>
+
+            <tr>
+              <td>LocoTrack</td>
+              <td class="best3">54.1</td><td class="best3">66.8</td><td class="best3">84.9</td>
+              <td class="best3">42.7</td><td class="best2">58.3</td><td class="best3">78.6</td>
+              <td class="best">24.0</td><td class="best2">35.5</td><td class="best3">71.7</td>
+              <td>55.7</td><td class="best3">68.6</td><td>89.0</td>
+              <td class="best3">39.8</td><td class="best3">53.4</td><td class="best2">78.7</td>
+              <td class="best">22.4</td><td class="best2">35.2</td><td class="best">67.4</td>
+            </tr>
+
+            <tr>
+              <td>CoTracker3</td>
+              <td>48.7</td><td>64.0</td><td>79.0</td>
+              <td>35.1</td><td>48.5</td><td>67.9</td>
+              <td>12.8</td><td>22.6</td><td>63.7</td>
+              <td>51.1</td><td>64.8</td><td>82.2</td>
+              <td>31.2</td><td>44.0</td><td>70.2</td>
+              <td>12.4</td><td>23.5</td><td>59.4</td>
+            </tr>
+
+            <tr>
+              <td>CoTracker3&dagger;</td>
+              <td class="best">56.6</td><td class="best2">67.5</td><td class="best2">85.4</td>
+              <td class="best2">44.3</td><td>56.8</td><td class="best">81.2</td>
+              <td class="best2">23.4</td><td>34.4</td><td class="best2">72.1</td>
+              <td class="best2">59.9</td><td class="best2">69.1</td><td class="best">91.5</td>
+              <td class="best2">40.8</td><td class="best2">53.5</td><td class="best">80.7</td>
+              <td class="best3">20.9</td><td>32.8</td><td class="best3">66.4</td>
+            </tr>
+
+            <tr>
+              <td><span class="tldr-highlight">DiTracker</span></td>
+              <td class="best2">56.3</td><td class="best">67.8</td><td class="best">86.4</td>
+              <td class="best">46.4</td><td class="best">59.4</td><td class="best2">79.5</td>
+              <td class="best">24.0</td><td class="best">38.5</td><td class="best">72.7</td>
+              <td class="best">61.1</td><td class="best">70.4</td><td class="best2">90.5</td>
+              <td class="best">41.2</td><td class="best">54.9</td><td class="best">80.7</td>
+              <td class="best2">21.4</td><td class="best">37.5</td><td class="best2">67.3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Quantitative results on ITTO-MOSE across difficulty levels.</strong>
+        Our method achieves top performance across motion dynamics and reappearance frequency categories, with particularly strong results on challenging scenarios involving large displacements and frequent occlusions.
+      </p>
+    `,
+  },
+
+  // (Slide 3) ✅ Corrupted DAVIS (ImageNet-C) table (from your LaTeX)
+  {
+    title: 'Visual Corruptions',
+    desc: '',
+    tables: `
+      <div class="results-table-wrapper" style="max-width: 100%; overflow-x: auto;">
+        <div class="table-caption">
+          <span class="legend">
+            <span><span class="swatch best"></span>Best</span>
+            <span><span class="swatch best2"></span>2nd</span>
+            <span><span class="swatch best3"></span>3rd</span>
+          </span>
+        </div>
+
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th rowspan="2">Method</th>
+              <th colspan="3">Noise</th>
+              <th colspan="4">Blur</th>
+              <th colspan="4">Weather</th>
+              <th colspan="4">Digital</th>
+              <th rowspan="2">Avg.</th>
+            </tr>
+            <tr>
+              <th>Gauss.</th><th>Shot</th><th>Impulse</th>
+              <th>Defocus</th><th>Glass</th><th>Motion</th><th>Zoom</th>
+              <th>Snow</th><th>Frost</th><th>Fog</th><th>Bright</th>
+              <th>Contrast</th><th>Elastic</th><th>Pixel</th><th>JPEG</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>TAPIR</td>
+              <td>59.6</td><td>59.1</td><td>58.5</td>
+              <td>62.7</td><td>61.7</td><td>57.0</td><td>53.5</td>
+              <td>61.8</td><td>58.4</td><td>63.8</td><td>69.8</td>
+              <td>65.6</td><td>36.0</td><td>22.7</td><td>41.0</td>
+              <td>55.4</td>
+            </tr>
+
+            <tr>
+              <td>TAPTRv2</td>
+              <td>64.1</td><td>61.8</td><td>61.7</td>
+              <td>64.7</td><td>60.7</td><td>56.0</td><td>55.7</td>
+              <td>62.5</td><td>67.1</td><td>72.4</td><td>75.3</td>
+              <td>64.1</td><td>32.7</td><td>22.2</td><td>39.5</td>
+              <td>59.2</td>
+            </tr>
+
+            <tr>
+              <td>BootsTAPIR</td>
+              <td>53.1</td><td class="best3">67.1</td><td>64.5</td>
+              <td>64.7</td><td>63.5</td><td>59.9</td><td>56.7</td>
+              <td>66.9</td><td>67.5</td><td>71.0</td><td>73.8</td>
+              <td>71.5</td><td class="best3">38.0</td><td class="best2">23.4</td><td class="best">57.7</td>
+              <td class="best3">59.9</td>
+            </tr>
+
+            <tr>
+              <td>LocoTrack</td>
+              <td class="best3">66.7</td><td>66.4</td><td class="best3">65.8</td>
+              <td class="best3">68.4</td><td class="best2">66.5</td><td class="best3">63.6</td><td class="best3">58.4</td>
+              <td class="best3">68.0</td><td class="best3">70.1</td><td class="best3">74.1</td><td class="best3">75.1</td>
+              <td class="best2">74.4</td><td>36.2</td><td>22.6</td><td>51.9</td>
+              <td>61.7</td>
+            </tr>
+
+            <tr>
+              <td>CoTracker3</td>
+              <td>54.4</td><td>51.7</td><td>51.8</td>
+              <td>66.1</td><td>60.2</td><td>57.3</td><td>55.5</td>
+              <td>62.6</td><td>64.7</td><td>73.7</td><td>73.6</td>
+              <td>71.7</td><td>22.4</td><td>23.1</td><td>42.7</td>
+              <td>55.4</td>
+            </tr>
+
+            <tr>
+              <td>CoTracker3&dagger;</td>
+              <td class="best2">68.5</td><td class="best2">68.0</td><td class="best2">67.6</td>
+              <td class="best2">70.7</td><td class="best">68.5</td><td class="best2">64.3</td><td class="best2">60.2</td>
+              <td class="best2">70.8</td><td class="best2">71.6</td><td class="best2">75.8</td><td class="best2">75.3</td>
+              <td class="best">75.5</td><td class="best2">40.0</td><td class="best">26.2</td><td class="best3">55.7</td>
+              <td class="best2">64.7</td>
+            </tr>
+
+            <tr >
+              <td><span class="tldr-highlight">DiTracker</span></td>
+              <td class="best">73.1</td><td class="best">73.2</td><td class="best">71.9</td>
+              <td class="best">71.7</td><td class="best3">66.3</td><td class="best">64.7</td><td class="best">61.1</td>
+              <td class="best">72.1</td><td class="best">73.5</td><td class="best">76.1</td><td class="best">77.0</td>
+              <td class="best3">73.6</td><td class="best">42.1</td><td class="best3">23.1</td><td class="best2">56.8</td>
+              <td class="best">65.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Quantitative evaluation on TAP-Vid-DAVIS benchmark with corruptions from ImageNet-C.</strong>
+        Our method demonstrates superior robustness consistently outperforming across most of severe corruption types including noise, blur, weather, and digital corruptions.
+      </p>
+    `,
+  },
+];
+
+function renderTableSlide(item) {
+    return `
+    <div class="results-slide-content">
+        <h3 class="results-slide-title">${item.title}</h3>
+        <div>${item.tables}</div>
+        ${item.desc ? `<div class="results-caption"><p>${item.desc}</p></div>` : ``}
+    </div>
+    `;
+}
+
+// Fade-in Animation
+function initFadeInAnimations() {
+    const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+
+    const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+        }
+    });
+    }, observerOptions);
+
+    const sections = document.querySelectorAll('.section, .hero-section, .citation-section, .footer');
+    sections.forEach(section => {
+    section.classList.add('fade-in-section');
+    observer.observe(section);
+    });
+}
+
+// Scroll Spy for Sidebar
+function initScrollSpy() {
+    const sections = document.querySelectorAll('section[id]');
+    const sidebarLinks = document.querySelectorAll('.sidebar-item');
+    const sidebar = document.querySelector('.sidebar');
+
+    const observerOptions = {
+    root: null,
+    rootMargin: '-50% 0px -50% 0px',
+    threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        sidebarLinks.forEach(link => link.classList.remove('active'));
+
+        const activeLink = document.querySelector(`.sidebar-item[href="#${id}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+
+            const linkRect = activeLink.getBoundingClientRect();
+            const sidebarRect = sidebar.getBoundingClientRect();
+            const relativeTop = linkRect.top - sidebarRect.top;
+            sidebar.style.setProperty('--active-position', `${relativeTop - 32}px`);
+        }
+        }
+    });
+    }, observerOptions);
+
+    sections.forEach(section => observer.observe(section));
+}
+
+function copyBibtex() {
+    const text = document.getElementById('bibtex-text').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.citation-copy-btn');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+    setTimeout(() => { btn.innerHTML = original; }, 2000);
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    new Carousel('carousel-teaser', teaserItems, renderTeaserSlide);
+    new Carousel('carousel-quan', tableData, renderTableSlide);
+    new Carousel('carousel-qual-davis', qualitativeDAVISSlides, renderQualitativeSlide);
+    new Carousel('carousel-qual-itto', qualitativeITTOSlides, renderQualitativeSlide);
+    new Carousel('carousel-qual-corruption', qualitativeCorruptionSlides, renderQualitativeSlide);
+
+
+    initScrollSpy();
+    initFadeInAnimations();
+});
+</script>
+
+</body>
+</html>
