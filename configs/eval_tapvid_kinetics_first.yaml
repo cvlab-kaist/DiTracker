@@ -1,0 +1,6 @@
+defaults:
+  - default_config_eval
+exp_dir: ./output/kinetics
+dataset_name: tapvid_kinetics_first
+checkpoint: ./checkpoint
+   

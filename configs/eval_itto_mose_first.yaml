@@ -1,0 +1,5 @@
+defaults:
+  - default_config_eval
+exp_dir: ./output/itto
+dataset_name: itto_mose_first
+checkpoint: ./checkpoint

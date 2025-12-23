@@ -1,0 +1,5 @@
+defaults:
+  - default_config_eval
+exp_dir: ./output/davis
+dataset_name: tapvid_davis_first
+checkpoint: ./checkpoint
