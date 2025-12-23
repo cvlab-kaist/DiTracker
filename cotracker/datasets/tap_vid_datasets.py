@@ -20,7 +20,8 @@ from cotracker.datasets.utils import CoTrackerData
 
 # Add imagenet_c to path
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append('/home/cvlab16/projects/soowon/co-tracker/robustness/ImageNet-C/imagenet_c')
+IMAGENET_C_PATH = os.path.abspath(os.path.join('/'.join(CURRENT_DIR.split('/')[:-2]), "robustness/ImageNet-C/imagenet_c"))
+sys.path.append(IMAGENET_C_PATH)
 from imagenet_c import corrupt
 
 
