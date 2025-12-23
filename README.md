@@ -118,7 +118,7 @@ python evaluate.py dataset_root=/path/to/data severity=5
 To visualize tracked trajectories, add the `visualize=True` option:
 
 ```bash
-python evaluate.py --config-name eval_itto_mose_first dataset_root=/path/to/data visualize=True
+python evaluate_corruption.py --config-name eval_itto_mose_first dataset_root=/path/to/data visualize=True
 ```
 
 
@@ -130,7 +130,7 @@ To train DiTracker from scratch:
 python train.py --ckpt_path ./output --dataset_root /path/to/data
 ```
 
-All training parameters are configured to match the paper's specifications. Experiments were conducted on **NVIDIA RTX A6000** GPUs.
+All training parameters are configured to match the paper's specifications. Experiments were conducted on NVIDIA RTX A6000 GPUs.
 
 ### Key Training Parameters
 
@@ -148,7 +148,7 @@ Other parameters can be customized. But for best performance, we recommend keepi
 
 ## 🙏 Acknowledgements
 
-This code is built upon [CoTracker3](https://github.com/facebookresearch/co-tracker). We sincerely thank the authors for their excellent work and for making their code publicly available.
+This code is built upon [CoTracker3](https://github.com/facebookresearch/co-tracker) and [Benchmarking Neural Network Robustness to Common Corruptions and Perturbations](https://github.com/hendrycks/robustness). We sincerely thank the authors for their excellent work and for making their code publicly available.
 
 
 
