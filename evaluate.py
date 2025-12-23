@@ -27,7 +27,7 @@ class DefaultConfig:
     exp_dir: str = "./outputs"
     
     # Path to the pre-trained model checkpoint to be used for the evaluation.
-    checkpoint: str = "/path/to/ckpt"
+    checkpoint: str = "./checkpoint"
     
     # The root directory of the dataset.
     dataset_root: str = "/path/to/data"
@@ -146,15 +146,15 @@ def run_eval(cfg: DefaultConfig):
         dataset_type = cfg.dataset_name.split("_")[1]
         if dataset_type == "davis":
             data_root = os.path.join(
-                cfg.dataset_root, "tapvid", "tapvid_davis", "tapvid_davis.pkl"
+                cfg.dataset_root, "tapvid/tapvid_davis/tapvid_davis.pkl"
             )
         elif dataset_type == "kinetics":
-            data_root = os.path.join(cfg.dataset_root, "tapvid", "tapvid_kinetics")
+            data_root = os.path.join(cfg.dataset_root, "tapvid/tapvid_kinetics")
         elif dataset_type == "robotap":
-            data_root = os.path.join(cfg.dataset_root, "tapvid", "tapvid_robotap")
+            data_root = os.path.join(cfg.dataset_root, "tapvid/tapvid_robotap")
         elif dataset_type == "stacking":
             data_root = os.path.join(
-                cfg.dataset_root, "tapvid_rgb_stacking", "tapvid", "tapvid_rgb_stacking.pkl"
+                cfg.dataset_root, "tapvid_rgb_stacking/tapvid/tapvid_rgb_stacking.pkl"
             )
         test_dataset = TapVidDataset(
             dataset_type=dataset_type,
