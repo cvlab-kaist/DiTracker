@@ -110,7 +110,9 @@ href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-s
 
     <!-- Optional: teaser carousel (enabled + container exists) -->
     <div id="carousel-teaser" class="carousel-container"></div>
-
+    <div class="analysis-image-container">
+      <img src="assets/teaser_graph.png" alt="DiTracker teaser graph" class="analysis-image" />
+  </div>
     <div class="teaser-caption">
         <p>
             <span class="tldr-highlight">DiTracker</span> leverages pre-trained video Diffusion Transformer (DiT) features to outperform state-of-the-art methods such as CoTracker3 
@@ -124,10 +126,6 @@ href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-s
 <!-- Abstract -->
 <section class="section alt-bg">
 <div class="container">
-    <div class="analysis-image-container">
-        <img src="assets/teaser_graph.png" alt="DiTracker teaser graph" class="analysis-image" />
-    </div>
-
     <h2 class="section-title">Abstract</h2>
     <div class="abstract-text">
     <p>
@@ -695,7 +693,7 @@ const tableData = [
 
             <tr>
                 <td>TAPTRv2</td><td>Kub.</td><td>36k</td><td>-</td><td>32</td>
-                <td>36.3</td><td>47.8</td><td class="best3">76.9</td>
+                <td>36.3</td><td>47.8</td><td>76.9</td>
                 <td class="best2">63.0</td><td>76.1</td><td class="best2">91.1</td>
                 <td>49.0</td><td>64.4</td><td class="best3">85.2</td>
             </tr>
@@ -709,28 +707,28 @@ const tableData = [
 
             <tr>
                 <td>LocoTrack</td><td>Kub.</td><td>400k</td><td>24-48</td><td>8</td>
-                <td class="best3">39.2</td><td class="best2">52.3</td><td class="best2">78.2</td>
+                <td class="best3">39.2</td><td class="best3">52.3</td><td class="best3">78.2</td>
                 <td class="best">64.8</td><td class="best2">77.4</td><td>86.2</td>
                 <td>52.3</td><td>66.4</td><td>82.1</td>
             </tr>
 
             <tr>
                 <td>CoTracker3</td><td>Kub.</td><td>50k</td><td>60</td><td>32</td>
-                <td>31.4</td><td>43.9</td><td>70.5</td>
+                <td>34.0</td><td>47.1</td><td>71.7</td>
                 <td>57.8</td><td>74.9</td><td>80.4</td>
                 <td>49.3</td><td>62.7</td><td>78.7</td>
             </tr>
 
             <tr>
                 <td>CoTracker3&dagger;</td><td>Kub. + 15k</td><td>65k</td><td>60-80</td><td>32</td>
-                <td class="best2">40.3</td><td class="best3">51.6</td><td class="best">79.4</td>
+                <td class="best2">42.4</td><td class="best2">55.8</td><td class="best">80.4</td>
                 <td class="best">64.8</td><td class="best3">76.8</td><td class="best">91.7</td>
                 <td class="best">54.7</td><td class="best2">67.8</td><td class="best">87.5</td>
             </tr>
 
             <tr>
                 <td><span class="tldr-highlight">DiTracker</span></td><td>Kub.</td><td>36k</td><td>46</td><td>4</td>
-                <td class="best">41.1</td><td class="best">54.1</td><td class="best">79.4</td>
+                <td class="best">43.9</td><td class="best">57.9</td><td class="best2">79.3</td>
                 <td class="best3">62.7</td><td class="best">77.5</td><td>85.2</td>
                 <td class="best3">54.3</td><td class="best3">67.4</td><td>84.5</td>
             </tr>
