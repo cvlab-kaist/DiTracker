@@ -152,10 +152,13 @@ This code is built upon [CoTracker3](https://github.com/facebookresearch/co-trac
 If you find DiTracker useful for your research, please consider citing:
 
 ```bibtex
-@article{son2025ditracker,
-  title={DiTracker: Repurposing Video Diffusion Transformers for Robust Point Tracking},
-  author={Son, Soowon and An, Honggyu and Kim, Chaehyun and Ko, Hyunah and Nam, Jisu and Chung, Dahyun and Jin, Siyoon and Yi, Jung and Min, Jaewon and Hur, Junhwa and Kim, Seungryong},
-  journal={arXiv preprint arXiv:XXXXX.XXXXX},
-  year={2025}
+@misc{son2025repurposingvideodiffusiontransformers,
+      title={Repurposing Video Diffusion Transformers for Robust Point Tracking}, 
+      author={Soowon Son and Honggyu An and Chaehyun Kim and Hyunah Ko and Jisu Nam and Dahyun Chung and Siyoon Jin and Jung Yi and Jaewon Min and Junhwa Hur and Seungryong Kim},
+      year={2025},
+      eprint={2512.20606},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2512.20606}, 
 }
 ```
