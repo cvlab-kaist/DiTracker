@@ -23,12 +23,7 @@
 </p>
 
 <p align="center">
-  <a href="https://cvlab-kaist.github.io/DiTracker/">
-    <img src="https://img.shields.io/badge/Project-Page-green" alt="Project Page">
-  </a>
-  <a href="https://arxiv.org/abs/2512.20606">
-    <img src="https://img.shields.io/badge/arXiv-2025.20606-b31b1b.svg" alt="arXiv">
-  </a>
+  <a href="https://cvlab-kaist.github.io/DiTracker/"><img src="https://img.shields.io/badge/Project-Page-green" alt="Project Page"></a>    <a href="https://arxiv.org/abs/2512.20606"><img src="https://img.shields.io/badge/arXiv-2025.20606-b31b1b.svg" alt="arXiv"></a>
 </p>
 
 <p align="center">
