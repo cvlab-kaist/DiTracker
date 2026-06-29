@@ -1,4 +1,4 @@
-# <p align="center"> Probing and Leveraging Video Diffusion Transformer Features <br> for Robust Point Tracking </p>
+## <p align="center"> Probing and Leveraging Video Diffusion Transformer Features <br> for Robust Point Tracking </p>
 
 <p align="center">
   <a href="https://soow0n.github.io/"><strong>Soowon Son</strong></a><sup>1</sup> ·
