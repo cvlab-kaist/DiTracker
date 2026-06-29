@@ -1,15 +1,15 @@
-# Repurposing Video Diffusion Transformers for Robust Point Tracking
+# <p align="center"> Probing and Leveraging Video Diffusion Transformer Features <br> for Robust Point Tracking </p>
 
 <p align="center">
-  <a href="https://scholar.google.com/citations?hl=&user=Eo87mRsAAAAJ"><strong>Soowon Son</strong></a><sup>1</sup> ·
+  <a href="https://soow0n.github.io/"><strong>Soowon Son</strong></a><sup>1</sup> ·
   <a href="https://hg010303.github.io/"><strong>Honggyu An</strong></a><sup>1</sup> ·
-  <a href="https://kchyun.github.io/"><strong>Chaehyun Kim</strong></a><sup>1</sup> ·
-  <a href="https://scholar.google.com/citations?user=oh5Od2wAAAAJ"><strong>Hyunah Ko</strong></a><sup>1</sup> ·
   <a href="https://nam-jisu.github.io/"><strong>Jisu Nam</strong></a><sup>1</sup> ·
-  <a href="https://scholar.google.com/citations?hl=&user=EU52riMAAAAJ"><strong>Dahyun Chung</strong></a><sup>1</sup> · <br>
+  <a href="https://hyunahko.github.io/"><strong>Hyunah Ko</strong></a><sup>1</sup> ·
+  <a href="https://kchyun.github.io/"><strong>Chaehyun Kim</strong></a><sup>1</sup> ·
+  <br>
+  <a href="https://scholar.google.com/citations?hl=&user=EU52riMAAAAJ"><strong>Dahyun Chung</strong></a><sup>1</sup> ·
   <a href="https://scholar.google.com/citations?hl=&user=rXRHxkwAAAAJ"><strong>Siyoon Jin</strong></a><sup>1</sup> ·
   <a href="https://yj-142150.github.io/jungyi/"><strong>Jung Yi</strong></a><sup>1</sup> ·
-  <a href="https://scholar.google.com/citations?user=WIiNrmoAAAAJ"><strong>Jaewon Min</strong></a><sup>1</sup> ·
   <a href="https://hurjunhwa.github.io/"><strong>Junhwa Hur</strong></a><sup>2†</sup> ·
   <a href="https://cvlab.kaist.ac.kr"><strong>Seungryong Kim</strong></a><sup>1†</sup>
 </p>
@@ -30,7 +30,7 @@
   <img src="assets/main_architecture.png" width="100%">
 </p>
 
-> TL;DR: **DiTracker** repurposes video Diffusion Transformers (DiTs) for point tracking with softmax-based matching, LoRA adaptation, and cost fusion, achieving **stronger robustness and faster convergence** on challenging benchmarks.
+> TL;DR: Under the same tracking head, **DiTracker** uses pre-trained video DiT features to surpass CoTracker3 trained on real-world videos, using only synthetic data.
 
 <br>
 
